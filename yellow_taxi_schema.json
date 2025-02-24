@@ -1,0 +1,12 @@
+{
+  "autodetect": true,
+  "csvOptions": {
+    "encoding": "UTF-8",
+    "preserveAsciiControlCharacters": false,
+    "quote": "\""
+  },
+  "sourceFormat": "CSV",
+  "sourceUris": [
+    "gs://aprilhjy-20250202-kestra/yellow_tripdata_*.csv.gz"
+  ]
+}
