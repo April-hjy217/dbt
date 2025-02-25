@@ -51,7 +51,25 @@ ORDER BY service_type;
 ```
 
 Q6.
-SELECT *
-FROM zoomcamp.fct_taxi_trips_monthly_fare_p95
-WHERE year = 2020 AND month = 4
-ORDER BY service_type;
+green: {p97: 55.0, p95: 45.0, p90: 26.5}, yellow: {p97: 31.5, p95: 25.5, p90: 19.0}
+
+```
+SELECT * FROM `kestra-week2.zoomcamp.fct_taxi_trips_monthly_fare_p95` 
+WHERE year = 2020 AND month = 4 and service_type='Yellow' --'Green'
+limit 1;
+```
+
+```
+Green
+2020
+4
+55.0
+45.0
+26.5
+Yellow
+2020
+4
+32.0
+26.0
+19.0
+```
