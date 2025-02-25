@@ -11,7 +11,7 @@ WITH valid_trips AS (
     WHERE
           fare_amount > 0
       AND trip_distance > 0
-      AND payment_type_description IN ('Cash', 'Credit Card')
+      AND payment_type_description in ('Cash', 'Credit card')
 ),
 with_time AS (
     SELECT
@@ -20,27 +20,18 @@ with_time AS (
         EXTRACT(MONTH FROM pickup_datetime) AS month,
         fare_amount
     FROM valid_trips
-),
-approximate AS (
-    SELECT
-      service_type,
-      year,
-      month,
-      APPROX_QUANTILES(fare_amount, 101) AS arr
-    FROM with_time
-    GROUP BY service_type, year, month
 )
 
 SELECT
-  service_type,
-  year,
-  month,
-  arr[SAFE_OFFSET(97)] AS p97,
-  arr[SAFE_OFFSET(95)] AS p95,
-  arr[SAFE_OFFSET(90)] AS p90
-
-FROM approximate
+    service_type,
+    year,
+    month,
+    PERCENTILE_CONT(fare_amount, 0.97) OVER (PARTITION BY service_type, year, month) AS p97,
+    PERCENTILE_CONT(fare_amount, 0.95) OVER (PARTITION BY service_type, year, month) AS p95,
+    PERCENTILE_CONT(fare_amount, 0.90) OVER (PARTITION BY service_type, year, month) AS p90
+FROM with_time
 ORDER BY service_type, year, month
+
 
 
 

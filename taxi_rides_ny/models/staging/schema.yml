@@ -8,8 +8,8 @@ sources:
     tables:
       - name: green_tripdata
       - name: yellow_tripdata
-         # freshness:
-           # error_after: {count: 6, period: hour}
+      - name: fhv_taxi_external
+        identifier: fhv_taxi_external   # name in BigQuery
 
 models:
     - name: stg_green_tripdata
@@ -194,3 +194,44 @@ models:
             description: Total amount of all tolls paid in trip.
           - name: Total_amount 
             description: The total amount charged to passengers. Does not include cash tips.
+
+models:
+    - name: stg_fhv_tripdata
+      description: >
+        Trips made by For-Hire Vehicles (FHV). This staging model includes only 
+        records where dispatching_base_num is not null (filtered in the SQL). 
+        No deduplication is performed.
+      columns:
+          - name: pickup_locationid
+            description: >
+              Location ID where the trip started (PUlocationID).
+            tests:
+              - relationships:
+                  to: ref('taxi_zone_lookup')
+                  field: locationid
+                  severity: warn
+
+          - name: dropoff_locationid
+            description: >
+              Location ID where the trip ended (DOlocationID).
+            tests:
+              - relationships:
+                  to: ref('taxi_zone_lookup')
+                  field: locationid
+                  severity: warn
+
+          - name: pickup_datetime
+            description: >
+              The date and time when the vehicle actually picked up the passenger.
+
+          - name: dropoff_datetime
+            description: >
+              The date and time when the vehicle dropped off the passenger.
+
+          - name: sr_flag
+            description: >
+              SR_Flag indicates shared ride or special request. (Example field.)
+
+          - name: affiliated_base_number
+            description: >
+              The base number with which the FHV is affiliated.
